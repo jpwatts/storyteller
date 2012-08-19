@@ -14,8 +14,8 @@ class _Registry(object):
         self.chapter = 0
 
     def register(self, func):
-        self.chapter += 1
         func.chapter = self.chapter
+        self.chapter += 1
         return func
 
 chapter = _Registry().register
@@ -52,8 +52,11 @@ class StoryLoader(unittest.TestLoader):
         chapters = []
         for attr_name in dir(testCaseClass):
             attr = getattr(testCaseClass, attr_name)
-            if getattr(attr, 'chapter', None):
-                chapters.append((attr.chapter, attr_name))
+            try:
+                chapter = attr.chapter
+            except AttributeError:
+                continue
+            chapters.append((chapter, attr_name))
         return [c[1] for c in sorted(chapters)]
 
 
